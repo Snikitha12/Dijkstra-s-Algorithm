@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+
+const int INF = std::numeric_limits<int>::max();
+
+// Structure to represent edges in the graph
+struct Edge {
+    int dest;
+    int weight;
+};
+
+// Function to apply Dijkstra's Algorithm
+void dijkstra(std::vector<std::vector<Edge>>& graph, int source) {
+    int totalNodes = graph.size();
+
+    // Initialize distances and set all to infinity except for the source
+    std::vector<int> distance(totalNodes, INF);
+    distance[source] = 0;
+
+    // Priority queue to store nodes and their distances
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
+
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        // Iterate through adjacent nodes of u
+        for (const Edge& edge : graph[u]) {
+            int v = edge.dest;
+            int weight = edge.weight;
+
+            // If the distance is shorter through u to v, update the distance
+            if (distance[v] > distance[u] + weight) {
+                distance[v] = distance[u] + weight;
+                pq.push({distance[v], v});
+            }
+        }
+    }
+
+    // Print the shortest distances from the source node to all other nodes
+    for (int i = 0; i < totalNodes; ++i) {
+        std::cout << "Distance from node " << source << " to node " << i << " is: ";
+        if (distance[i] == INF) {
+            std::cout << "INFINITY" << std::endl;
+        } else {
+            std::cout << distance[i] << std::endl;
+        }
+    }
+}
+
+int main() {
+    int totalNodes = 6; // Total nodes in the graph
+
+    // Graph represented by adjacency lists
+    std::vector<std::vector<Edge>> graph(totalNodes);
+
+    // Adding edges and their weights
+    graph[0].push_back({1, 5});
+    graph[0].push_back({2, 3});
+    graph[1].push_back({3, 6});
+    graph[1].push_back({2, 2});
+    graph[2].push_back({4, 4});
+    graph[2].push_back({5, 2});
+    graph[2].push_back({4, 8});
+    graph[3].push_back({4, 6});
+    graph[4].push_back({5, 3});
+
+    int sourceNode = 0; // Source node for Dijkstra's Algorithm
+
+    dijkstra(graph, sourceNode);
+
+    return 0;
+}
